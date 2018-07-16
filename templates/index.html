@@ -1,0 +1,399 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+	<title>aww</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/favicon-32x32.png' %}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon-16x16.png' %}">
+	<link rel="manifest" href="{% static 'favicon/site.webmanifest' %}">
+	<link rel="mask-icon" href="{% static 'favicon/safari-pinned-tab.svg' %}" color="#5bbad5">
+	<meta name="msapplication-TileColor" content="#da532c">
+	<meta name="theme-color" content="#ffffff">
+	<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono|IBM+Plex+Serif|Vollkorn+SC" rel="stylesheet">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css">
+	<link rel="stylesheet" href="{% static 'reset.css' %}"/>
+    <link rel="stylesheet/less" type="text/css" href="{% static 'main.less' %}"/>
+	<script src="{% static 'less.min.js' %}"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="{% static 'jquery_script.js' %}"></script>
+</head>
+<body>
+	<div class="contents">
+		<div class="toggle">
+			<span class="horisontal"></span>
+			<span class="vertical"></span>
+		</div>
+		<nav>
+			<h3><span>Django 2 dfgfdg dsfg</span></h3>
+			<a href="main">Начало работы</a>
+			<a href="chapter2">Подробнее о шаблонах</a>
+			<a href="chapter3">Статические файлы</a>
+		</nav>
+	</div>
+	<main>
+		{% block content %}
+		<h2 class="articleTitle">
+			// Установка Django в изолированном (виртуальном) окружении,<br>// создание проекта Django, создание приложения Django, использование html-шаблона
+		</h2>
+		<p>
+			Разработчики Django для работы с его второй версией рекомендуют пользоваться третьей версией Python. В Windows узнать какая версия Python установлена (и установлена ли вообще) можно по команде python -V:
+		</p>
+		<div>
+			<p class="cmdScreen">C:\Users\user>python -V
+Python 3.6.5
+C:\Users\user>_</p>
+		</div>
+		<p>
+			Кроме собственно Питона понадобится его менеджер пакетов pip. Узнать его версию можно аналоничным образом pip -V:
+		</p>
+		<code class="cmdScreen">C:\Users\user>pip -V
+pip 10.0.1 from c:\python\lib\site-packages\pip (python 3.6)
+C:\Users\user>_</code>
+		<p>
+			С помощью pip по команде pip install virtualenv можно установить пакет virtualenv:
+		</p>
+		<code class="cmdScreen">C:\Users\user>pip install virtualenv
+Collecting virtualenv
+  Downloading https://files.pythonhosted.org/packages/6/30/96a02b2287098b23b875bc8c2f58071c35d2efe84f747b64d523721dc2b5/virtualenv-16.0.0-py2.py3-none-any.whl(1.9MB)
+    100% _|████████████████████████████████| 1.9MB 1.8MB/s
+Installing collected packages: virtualenv
+  The script virtualenv.exe is installed in 'c:\python\Scripts' which is not on PATH.
+  Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+Successfully installed virtualenv-16.0.0
+C:\Users\user>_</code>
+		<p>
+			Virtualenv позволяет создавать на одной машине несколько изолированных, независимых друг от друга окружений -"песочниц". В одной такой "песочнице" можно работать со старой версией какого-либо пакета (того же Django), а в другой - установить новую и работать уже с новой версией, не беспокоясь о том, что это негативно повлияет на другие приложения, которые используют старую версию. Если не использовать виртуальное окружение, то установка новой версии обновит старую версию, и такое обновление может сделать неработоспособным приложение, написанное ранее под старой версией. В принципе, можно и не устанавливать virtualenv и работать в общем, глобальном окружении с общим набором пакетов для всех приложений.
+		</p>
+		<p>
+			Проверить какие пакеты уже установлены на машине можно по команде pip freeze.
+		</p>
+		<code class="cmdScreen">C:\Users\user>pip freeze
+virtualenv==16.0.0
+C:\Users\user>_</code>
+		<p>
+			Теперь можно создать виртуальное окружение, установить в нем Django и работать. Для этого нужно выбрать себе какое-нибудь место на диске, например, корень диска D, перейти в него по команде d: и создать виртуальное окружение. Команда virtualenv djenv создаст виртуальное окружение с именем djenv.
+		</p>
+		<code class="cmdScreen">D:\>virtualenv djenv
+Using base prefix 'c:\\python'
+New python executable in D:\djenv\Scripts\python.exe
+Installing setuptools, pip, wheel...done.
+D:\>_</code>
+		<p>
+			В результате на диске D появится папка djenv со следующей структурой:
+		</p>
+		<ul class="tree">
+			<li class="openedDir">djenv
+				<ul>
+					<li class="dir">Include</li>
+					<li class="dir">Lib</li>
+					<li class="dir">Scripts</li>
+					<li class="dir">tcl</li>
+					<li>pip-selfcheck.json</li>
+				</ul>
+			</li>
+		</ul>
+		<p>
+			В папке Scripts находятся файлы activate.bat и deactivate.bat, которые соответственно
+			запускают и останавливают виртуальное окружение. Для запуска нужно указать в окне команд
+			путь к файлу activate.bat или, перейдя в папку Scripts, скомандовать activate. Имя 
+			запущенного окружения отобразится в окне команд в скобках.
+		</p>
+		<code class="cmdScreen">D:\djenv\Scripts>activate
+
+(djenv) D:\djenv\Scripts>_</code>
+		<p>
+			Можно наблюдать, что в созданном и запущенном окружении djenv нет установленных пакетов.
+		</p>
+		<code class="cmdScreen">(djenv) D:\djenv>pip freeze
+
+(djenv) D:\djenv>_</code>
+		<p>
+			Команда pip install django установит в него последнюю версию Django.
+		</p>
+		<code class="cmdScreen">(djenv) D:\djenv>pip install django
+Collecting django
+  Downloading https://files.pythonhosted.org/packages/56/0e/afdacb47503b805f3ed213fe732bff05254c8befaa034bbada580be8a0ac/Django-2.0.6-py3-none-any.whl (7.1MB)
+    100% |████████████████████████████████| 7.1MB 1.6MB/s
+Collecting pytz (from django)
+  Using cached https://files.pythonhosted.org/packages/dc/83/15f7833b70d3e067ca91467ca245bae0f6fe56ddc7451aa0dc5606b120f2/pytz-2018.4-py2.py3-none-any.whl
+Installing collected packages: pytz, django
+Successfully installed django-2.0.6 pytz-2018.4
+
+(djenv) D:\djenv>_</code>
+		<p>
+			Используя не по назначению команду pip uninstall django, можно посмотреть что именно и куда было установлено. В папке djenv/Lib/site-packages появился дистрибутив Django, а в папке Scripts django-admin:
+		</p>
+		<code class="cmdScreen">(djenv) D:\djenv>pip uninstall django
+Uninstalling Django-2.0.6:
+  Would remove:
+    d:\djenv\lib\site-packages\django-2.0.6.dist-info\*
+    d:\djenv\lib\site-packages\django\*
+    d:\djenv\scripts\django-admin.exe
+    d:\djenv\scripts\django-admin.py
+Proceed (y/n)? n
+
+(djenv) D:\djenv>_</code>
+		<p>
+			Команда django-admin выдает список доступных команд для управления Django, в том числе и startproject, которая, как понятно из названия создает новый проект Django. Чтобы ей воспользоваться нужно передать в нее имя создаваемого проекта, например, dject.
+		</p>
+		<code class="cmdScreen">(djenv) D:\djenv>django-admin startproject dject
+
+(djenv) D:\djenv>_</code>
+		<p>
+			В окружении djenv появится новая папка dject c файлом manage.py в ней
+		</p>
+		<ul class="tree">
+			<li class="openedDir">djenv
+				<ul>
+					<li class="openedDir">dject
+						<ul>
+							<li class="dir">dject</li>
+							<li>manage.py</li>
+						</ul>
+					</li>
+					<li class="dir">Include</li>
+					<li class="dir">Lib</li>
+					<li class="dir">Scripts</li>
+					<li class="dir">tcl</li>
+					<li>pip-selfcheck.json</li>
+				</ul>
+			</li>
+		</ul>
+		<p>
+			Набрав manage.py можно посмотреть набор доступных команд для управления проектом, в числе которых есть команда runserver для запуска встроенного сервера Django, которым можно пользоваться при разработке. (Порт по умолчанию 8000 можно при желании изменить (например runserver 8080) и запускать несколько проектов по разным адресам.)
+		</p>
+		<code class="cmdScreen">(djenv) D:\djenv\dject>manage.py runserver
+Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have 14 unapplied migration(s). Your project may not work properly until you
+ apply the migrations for app(s): admin, auth, contenttypes, sessions.
+Run 'python manage.py migrate' to apply them.
+June 22, 2018 - 16:57:27
+Django version 2.0.6, using settings 'dject.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+_</code>
+		<p>
+			Таким образом, если нет ошибок, то после запуска сервера браузер по адресу http://127.0.0.1:8000/ должен выдать приветствие:
+		</p>
+		<iframe src="{% static 'frames/djangostartpage.html' %}" frameborder="0"></iframe>
+		<p>
+			При старте нового проекта Django создает две одноименные папки, внешняя из которых всего лишь
+			оболочка проекта и ее название можно изменить:
+		</p>
+		<ul class="tree">
+			<li class="openedDir">djeсt-wrapper
+				<ul>
+					<li class="openedDir">dject
+						<ul>
+							<li class="dir">__pycache__</li>
+							<li>__init__.py</li>
+							<li>settings.py</li>
+							<li>urls.py</li>
+							<li>wsgi.py</li>
+						</ul>
+					</li>
+					<li>db.sqlite3</li>
+					<li>manage.py</li>
+				</ul>
+			</li>
+		</ul>
+		<p>
+			Внутрення папка dject - это и есть папка проекта, в которой кроме прочего есть файл с настройками проекта settings.py. В нем указаны установленные по умолчанию приложения проекта.
+		</p>
+		<pre>
+			<code>
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+			</code>
+		</pre>
+		<p>
+			Чтобы добавить сюда свое приложение нужно сначала его создать. Для создания приложения служит команда manage.py startapp djapp, где djapp - это имя приложения.
+		</p>
+		<code class="cmdScreen">(djenv) D:\djenv\dject-wrapper>manage.py startapp djapp
+
+(djenv) D:\djenv\dject-wrapper>_</code>
+		<p>
+			В результате по соседству с папкой проекта появится папка djapp с созданным приложением. Пока что это только голая начальная структура приложения без конкретного содержания.
+		</p>
+		<ul class="tree">
+			<li class="openedDir">djeсt-wrapper
+				<ul>
+					<li class="openedDir">djapp
+						<ul>
+							<li class="dir">migrations</li>
+							<li>__init__.py</li>
+							<li>admin.py</li>
+							<li>apps.py</li>
+							<li>models.py</li>
+							<li>tests.py</li>
+							<li>views.py</li>
+						</ul>
+					</li>
+					<li class="dir">dject</li>
+					<li>db.sqlite3</li>
+					<li>manage.py</li>
+				</ul>
+			</li>
+		</ul>
+		<p>
+			За внешний вид приложения отвечает файл views.py. В нем предварительно уже подключена штатная функция render, которая может отдавать некий шаблон html в ответ на поступивший http запрос.
+		</p>
+		<pre>
+			<code>
+	from django.shortcuts import render
+			</code>
+		</pre>
+		<p>
+			Отвечать на http-запрос может также функция HttpRequest. Допустим, от браузера поступил запрос http://127.0.0.1:8000/knock-knock/. Путь к функции, которая на него должна ответить прописывается в файле urls.py проекта. В нем уже указано, что http://127.0.0.1:8000/admin/ поручается функции site.urls из импортированного модуля admin. Аналоничным образом можно импортировать views из приложения djapp и с помощью функции path() указать, что запрос knock-knock будет обрабатывать функция greeting из файла views.
+		</p>
+		<pre>
+			<code>
+	from django.contrib import admin
+	from django.urls import path
+	from djapp import views
+ 
+	urlpatterns = [
+		path('admin/', admin.site.urls),
+		path('knock-knock', views.greeting),
+	]
+			</code>
+		</pre>
+		<p>
+			Функция greeting, в свою очередь, принимает запрос и возвращает его с помошью функции HttpResponse модуля http. Функция render пока не используется.
+		</p>
+		<pre>
+			<code>
+	#from django.shortcuts import render
+	from django.http import HttpResponse
+ 
+	def greeting(request):
+		return HttpResponse("Welcome!")
+			</code>
+		</pre>
+		<p>
+			В результате по адресу http://127.0.0.1:8000/knock-knock браузер должен выдать:
+		</p>
+		<iframe src="{% static 'frames/welcome.html' %}" frameborder="0"></iframe>
+		<p>
+			В принципе функции представления можно определять и вне приложений. Для этого в папке проекта нужно создать файл с функцией представления и задать к ней маршрут в файле urls.py проекта. То есть, если теперь просто скопировать или перенести файл views.py в папку проекта dject и в файле urls.py заменить строку from djapp import views на from dject import views или from . import views (точка означает текущую директорию), то за адрес http://127.0.0.1:8000/knock-knock теперь будет отвечать не djapp/views.index a dject/views.index следующего содержания:
+		</p>
+		<pre>
+			<code>
+	#from django.shortcuts import render
+	from django.http import HttpResponse
+
+	def greeting(request):
+		return HttpResponse("&lt;h1&gt;Welcome!&lt;/h1&gt;")
+			</code>
+		</pre>
+		<iframe src="{% static 'frames/bigwelcome.html' %}" frameborder="0"></iframe>
+		<p>
+			Хоть такой подход и не является общей практикой, но таким образом можно, например, основную структуру описать в папке проекта, а его конкретное наполнение, самостоятельные части, из которых он состоит, оформлять уже в виде приложений. В этом случае папка проекта dject примет следующий вид:
+		</p>
+		<ul class="tree">
+			<li class="openedDir">dject
+				<ul>
+					<li class="dir">__pycache__</li>
+					<li>__init__.py</li>
+					<li>index.html</li>
+					<li>mainview.py</li>
+					<li>settings.py</li>
+					<li>urls.py</li>
+					<li>wsgi.py</li>
+				</ul>
+			</li>
+		</ul>
+		<p>
+			Здесь добавленный ранее файл views.py переименован в mainview.py, а начальная html-структура задана в файле index.html такого вида:
+		</p>
+		<pre>
+			<code>
+&lt;!doctype html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        
+    &lt;/head&gt;
+    &lt;body&gt;
+       &lt;header&gt;
+       		Здесь шапка сайта
+       &lt;/header&gt;
+       &lt;hr&gt;
+       &lt;main&gt;
+       		Здесь содержание
+       &lt;/main&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+			</code>
+		</pre>
+		<p>
+			Для отображения этого html-кода в браузере воспользуемся функцией render, которая в ответ на запрос будет выдавать шаблон index.html:
+		</p>
+		<pre>
+			<code>
+from django.shortcuts import render
+#from django.http import HttpResponse
+def main(request):
+	return render(request, "index.html")
+			</code>
+		</pre>
+		<p>
+			Чтобы Django знал, где искать файл index.html, в файле настроек settings.py нужно указать папку, в которой он находится:
+		</p>
+		<pre>
+			<code>
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': ['dject'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+			</code>
+		</pre>
+		<p>
+			Теперь только остается прописать в файле ulrs.py, что за обращения к корню сайта отвечает функция main:
+		</p>
+		<pre>
+			<code>
+from django.contrib import admin
+from django.urls import path
+from dject import mainview
+ 
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', mainview.main),
+]
+			</code>
+		</pre>
+		<p>
+			И браузер по адресу http://127.0.0.1:8000/ должен выдать следующее:
+		</p>
+		<iframe src="{% static 'frames/index1.html' %}" frameborder="0"></iframe>
+		<p>
+			Вместе с тем, к заданию структуры проекта можно подойти несколько иначе и не задействовать при этом папку проекта. Можно создать главное приложение main, которое будет точно так же описывать основную структуру и внешний вид проекта, а остальные приложения будут отвечать за конкретное наполнение.
+		</p>
+		{% endblock content %}
+	</main>
+<script src='http://yastatic.net/highlightjs/8.2/highlight.min.js'/></script>
+<script type='text/javascript'>hljs.initHighlightingOnLoad();</script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+	<h2 class="articleTitle">
+		// html-шаблоны в Django
+	</h2>
+	<p>
+		Путь к шаблонам, используемым в проекте, указывается в файле settings.py:
+	</p>
+	<pre>
+		<code>
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': ['dject/templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+		</code>
+	</pre>
+	<p>
+		Здесь в свойстве DIRS указано для Django, что папку templates с шаблонами следует искать в папке проекта dject, который может иметь, например, такую структуру:
+	</p>
+	<ul class="tree">
+		<li class="openedDir">djeсt-wrapper
+			<ul>
+				<li class="openedDir">dject
+					<ul>
+						<li class="dir">__pycache__</li>
+						<li class="openedDir">templates
+							<ul>
+								<li>about.html</li>
+								<li>contact.html</li>
+								<li>index.html</li>
+							</ul>
+						</li>
+						<li>__init__.py</li>
+						<li>settings.py</li>
+						<li>urls.py</li>
+						<li>view.py</li>
+						<li>wsgi.py</li>
+					</ul>
+				</li>
+				<li>db.sqlite3</li>
+				<li>manage.py</li>
+			</ul>
+		</li>
+	</ul>
+	<p>
+		В данном примере папка templates содержит три шаблона about.hmtl, contact.html и index.html. Главная страница index.html состоит из блока данных и шапки сайта с простым меню:
+	</p>
+	<pre>
+		<code>
+&lt;!doctype html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+		&lt;title&gt;Этот заголовок будет одинаковым пока для всех страниц&lt;/title&gt;
+    &lt;/head&gt;
+	&lt;body&gt;
+		&lt;header&gt;
+			&lt;nav&gt;
+				&lt;a href="/main/"&gt;Главная&lt;/a&gt;
+				&lt;a href="/about/"&gt;О сайте&lt;/a&gt;
+				&lt;a href="/contact/"&gt;Контакты&lt;/a&gt;
+			&lt;/nav&gt;
+		&lt;/header&gt;
+		&lt;hr&gt;
+		&lt;main&gt;
+	   		Это главная страница
+		&lt;/main&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+		</code>
+	</pre>
+	<p>
+		Шаблоны about.html и contact.html отличаются только содержанием блока данных:
+	</p>
+	<pre>
+		<code>
+&lt;!doctype html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+		&lt;title&gt;Этот заголовок будет одинаковым пока для всех страниц&lt;/title&gt;
+    &lt;/head&gt;
+	&lt;body&gt;
+		&lt;header&gt;
+			&lt;nav&gt;
+				&lt;a href="/main/"&gt;Главная&lt;/a&gt;
+				&lt;a href="/about/"&gt;О сайте&lt;/a&gt;
+				&lt;a href="/contact/"&gt;Контакты&lt;/a&gt;
+			&lt;/nav&gt;
+		&lt;/header&gt;
+		&lt;hr&gt;
+		&lt;main&gt;
+	   		Здесь информация о сайте
+		&lt;/main&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+		</code>
+	</pre>
+	<pre>
+		<code>
+&lt;!doctype html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+		&lt;title&gt;Этот заголовок будет одинаковым пока для всех страниц&lt;/title&gt;
+    &lt;/head&gt;
+	&lt;body&gt;
+		&lt;header&gt;
+			&lt;nav&gt;
+				&lt;a href="/main/"&gt;Главная&lt;/a&gt;
+				&lt;a href="/about/"&gt;О сайте&lt;/a&gt;
+				&lt;a href="/contact/"&gt;Контакты&lt;/a&gt;
+			&lt;/nav&gt;
+		&lt;/header&gt;
+		&lt;hr&gt;
+		&lt;main&gt;
+	   		Это страница с контактами
+		&lt;/main&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+		</code>
+	</pre>
+	<p>
+		Каждому шаблону соответствует своя функция представления в файле view.py:
+	</p>
+	<pre>
+		<code>
+from django.shortcuts import render
+ 
+def main(request):
+	return render(request, "index.html")
+def about(request):
+	return render(request, "about.html")
+def contact(request):
+	return render(request, "contact.html")
+		</code>
+	</pre>
+	<p>
+		А каждой функции соответствует свой адрес в файле urls.py:
+	</p>
+	<pre>
+		<code>
+from django.contrib import admin
+from django.urls import path
+from dject import view
+ 
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('main/', view.main),
+    path('about/', view.about),
+    path('contact/', view.contact),
+]
+		</code>
+	</pre>
+	<p>
+		В результате взаимодействия маршрутов, заданных в urls.py, представлений во view.py и шаблонов папки templates должно получиться:
+	</p>
+	<iframe src="{% static 'frames/chapter2/index.html' %}" frameborder="0"></iframe>
+	<p>
+		При этом общую для трех шаблонов шапку можно вынести в отдельный файл templates/header.html:
+	</p>
+	<pre>
+		<code>
+&lt;header&gt;
+	&lt;nav&gt;
+		&lt;a href="/main/"&gt;Главная&lt;/a&gt;
+		&lt;a href="/about/"&gt;О сайте&lt;/a&gt;
+		&lt;a href="/contact/"&gt;Контакты&lt;/a&gt;
+	&lt;/nav&gt;
+&lt;/header&gt;
+		</code>
+	</pre>
+	<p>
+		И далее включать его в нужные шаблоны в нужном месте с помощью тега  &#123;&#37; include &#37;&#125;:
+	</p>
+	<pre>
+		<code>
+&lt;!doctype html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+		&lt;title&gt;Этот заголовок будет одинаковым пока для всех страниц&lt;/title&gt;
+    &lt;/head&gt;
+	&lt;body&gt;
+    		&#123;&#37; include "header.html" &#37;&#125;
+		&lt;hr&gt;
+		&lt;main&gt;
+	   		Это главная страница
+		&lt;/main&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+		</code>
+	</pre>
+	<p>
+		Такой же вывод можно получить, не создавая отдельный шаблон, а взяв за основу уже имеющийся и отметив его изменяющиеся части тегами &#123;&#37; block &#37;&#125; и &#123;&#37; endblock &#37;&#125;. В данном примере основой может послужить шаблон index.html:
+	</p>
+	<pre>
+		<code>
+&lt;!doctype html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+		&lt;title&gt;Этот заголовок будет одинаковым пока для всех страниц&lt;/title&gt;
+    &lt;/head&gt;
+	&lt;body&gt;
+		&lt;header&gt;
+			&lt;nav&gt;
+				&lt;a href="/main/"&gt;Главная&lt;/a&gt;
+				&lt;a href="/about/"&gt;О сайте&lt;/a&gt;
+				&lt;a href="/contact/"&gt;Контакты&lt;/a&gt;
+			&lt;/nav&gt;
+		&lt;/header&gt;
+		&lt;hr&gt;
+		&lt;main&gt;
+			&#123;&#37; block content &#37;&#125;
+	   			Это главная страница
+			&#123;&#37; endblock content &#37;&#125;
+		&lt;/main&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+		</code>
+	</pre>
+	<p>
+		Здесь все, что находится за пределами тегов &#123;&#37; block &#37;&#125; и &#123;&#37; endblock &#37;&#125; может быть повторно использовано в неизменном виде и подключено в другом шаблоне инструкцией &#123;&#37; extends &#37;&#125;. Содержимое же блока с именем content будет определяться каждым шаблоном самостоятельно:
+	</p>
+	<pre>
+		<code>
+&#123;&#37; extends "index.html" &#37;&#125;
+&#123;&#37; block content &#37;&#125;
+	Здесь информация о сайте или перечень контактов
+&#123;&#37; endblock content &#37;&#125;
+		</code>
+	</pre>
+{% endblock content %}

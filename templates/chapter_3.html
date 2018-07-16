@@ -1,0 +1,127 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+<h2 class="articleTitle">
+	// Статические файлы в Django
+</h2>
+<p>
+	Стандартное подключение файла стилей
+	<pre>
+		<code class="html">
+&lt;link rel="stylesheet" href="style.css"&gt;
+		</code>
+	</pre>
+	изображения
+	<pre>
+		<code class="html">
+&lt;img src="picture.jpg" alt="picture"&gt;
+		</code>
+	</pre>
+	или скрипта
+	<pre>
+		<code class="html">
+&lt;script src="script.js"&gt;&lt;/script&gt;
+		</code>
+	</pre>
+	в Django принимает вид:
+	<pre>
+		<code class="html">
+&lt;link rel="stylesheet" href="&#123;&#37; static 'style.css' &#37;&#125;"&gt;
+&lt;img src="&#123;&#37; static 'picture.jpg' &#37;&#125;" alt="picture"&gt;
+&lt;script src="&#123;&#37; static 'script.js' &#37;&#125;"&gt;&lt;/script&gt;
+		</code>
+	</pre>
+</p>
+<p>
+	При этом Django будет искать указанные файлы в папках с названием static во всех приложениях, подключенных к проекту в INSTALLED_APPS и во всех папках, указанных в STATICFILES_DIRS в файле настроек settings.py:
+</p>
+<pre>
+	<code class="python">
+INSTALLED_APPS = [
+    'djapp',
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+
+STATICFILES_DIRS = [
+    "dject/mainstatic/",
+]
+	</code>
+</pre>
+<p>
+	Для приведенного примера стили, изображения и прочие статические файлы приложения djapp будут располагаться в папке djapp/static, а файлы, относящиеся ко всему проекту в целом будут находиться в папке mainstatic:
+</p>
+<ul class="tree">
+			<li class="openedDir">djeсt-wrapper
+				<ul>
+					<li class="openedDir">djapp
+						<ul>
+							<li class="dir">migrations</li>
+							<li class="openedDir">static
+								<ul>
+									<li>style.css</li>
+									<li>picture.jpg</li>
+								</ul>
+							</li>
+							<li>__init__.py</li>
+							<li>admin.py</li>
+							<li>apps.py</li>
+							<li>index.html</li>
+							<li>models.py</li>
+							<li>tests.py</li>
+							<li>views.py</li>
+						</ul>
+					</li>
+					<li class="openedDir">dject
+						<ul>
+							<li class="openedDir">mainstatic
+								<ul>
+									<li>reset.css</li>
+									<li>script.js</li>
+								</ul>
+							</li>
+							<li class="dir">__pycache__</li>
+							<li>__init__.py</li>
+							<li>settings.py</li>
+							<li>urls.py</li>
+							<li>wsgi.py</li>
+						</ul>
+					</li>
+					<li>db.sqlite3</li>
+					<li>manage.py</li>
+				</ul>
+			</li>
+		</ul>
+<p>
+	В html-файле при этом обязательно нужно указывать &#123;&#37; load static &#37;&#125;:
+</p>
+<pre>
+	<code>
+&#123;&#37; load static &#37;&#125;
+
+&lt;!doctype html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+		&lt;link rel="stylesheet" href="&#123;&#37; static 'reset.css' &#37;&#125;"&gt;
+		&lt;link rel="stylesheet" href="&#123;&#37; static 'style.css' &#37;&#125;"&gt;    
+    &lt;/head&gt;
+    &lt;body&gt;
+		&lt;img src="&#123;&#37; static 'picture.jpg' &#37;&#125;" alt="picture"&gt;
+		&lt;script src="&#123;&#37; static 'script.js' &#37;&#125;"&gt;&lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+	</code>
+</pre>
+В css-файлах ничего дополнительно указывать не нужно. В settings.py есть строка STATIC_URL = '/static/, и подключить изображение, которое находится в папке static, в качестве фона в css можно также как обычно:
+<pre>
+	<code>
+.some_class {
+	background: url('имя_файла.png');
+}
+	</code>
+</pre>
+{% endblock content %}
